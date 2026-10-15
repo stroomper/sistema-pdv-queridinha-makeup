@@ -4,7 +4,23 @@ O **Queridinha Makeup PDV** é um sistema de caixa e gestão de estoque desktop 
 
 ---
 
-## 📸 Funcionalidades Principais
+## 📸 Demonstração do Sistema
+
+![Caixa PDV - Ponto de Venda](assets/caixa.png)
+*Interface de caixa com busca rápida por código EAN, produtos avulsos e cálculo automático de troco.*
+
+![Dashboard - Painel Analítico](assets/dashboard.png)
+*Painel analítico com faturamento, lucro bruto, ticket médio e análise da Curva ABC.*
+
+![Histórico de Vendas](assets/vendas.png)
+*Histórico de vendas com detalhamento expansível de itens, reimpressão de cupons e cancelamento com estorno ao estoque.*
+
+![Gestão de Estoque](assets/estoque.png)
+*Controle de estoque com edição rápida, busca dinâmica e importação em massa de planilhas Excel/CSV.*
+
+---
+
+## ✨ Funcionalidades Principais
 
 ### 🛒 Ponto de Venda (PDV / Caixa)
 - **Busca Agilizada**: Leitura e busca rápida por Código de Barras (EAN) ou nome do produto.
@@ -30,23 +46,10 @@ O **Queridinha Makeup PDV** é um sistema de caixa e gestão de estoque desktop 
 - **Importação Massiva**: Leitura de planilhas Excel (`.xlsx`, `.xls`, `.xlsm`) e CSV para atualização em lote.
 - **Edição Rápida**: Correção direta de preços, estoque e códigos de barras.
 
-## 📸 Demonstração do Sistema
+---
 
-![Caixa PDV - Ponto de Venda](assets/caixa.png)
-*Interface de caixa com busca rápida por código EAN, produtos avulsos e cálculo automático de troco.*
+## 💾 Segurança dos Dados
 
-![Dashboard - Painel Analítico](assets/dashboard.png)
-*Painel analítico com faturamento, lucro bruto, ticket médio e análise da Curva ABC.*
-
-![Histórico de Vendas](assets/vendas.png)
-*Histórico de vendas com detalhamento expansível de itens, reimpressão de cupons e cancelamento com estorno ao estoque.*
-
-![Gestão de Estoque](assets/estoque.png)
-*Controle de estoque com edição rápida, busca dinâmica e importação em massa de planilhas Excel/CSV.*
-
---
-
-### 💾 Segurança dos Dados
 - **Backup da Base**: Exportação em 1 clique do banco de dados SQLite (`caixa.db`).
 - **Persistência Segura**: Armazenamento nativo na pasta de dados do usuário (`AppData`), garantindo permissões de leitura/escrita no Windows sem risco de perda em atualizações.
 
@@ -73,5 +76,30 @@ O **Queridinha Makeup PDV** é um sistema de caixa e gestão de estoque desktop 
 
 1. **Clonar o repositório:**
    ```bash
-    git clone https://github.com/stroomper/sistema-pdv-queridinha-makeup.git
+   git clone [https://github.com/stroomper/sistema-pdv-queridinha-makeup.git](https://github.com/stroomper/sistema-pdv-queridinha-makeup.git)
    cd sistema-pdv-queridinha-makeup
+2. Instalar as dependências:
+
+Bash
+npm install
+Recompilar módulos nativos (SQLite3):
+
+Bash
+npx electron-builder install-app-deps
+Executar a aplicação em modo de desenvolvimento:
+
+Bash
+npm start
+
+3.📦 Como Gerar o Executável (.exe)
+Para compilar o instalador da aplicação para Windows:
+
+Bash
+npm run dist
+O arquivo de instalação gerado estará disponível dentro do diretório dist/ (ex: dist/Queridinha Makeup PDV Setup 1.0.0.exe).
+
+📄 Licença
+Este projeto é de uso privado para a loja Queridinha Makeup e está sob a licença ISC.
+
+
+---
