@@ -59,5 +59,3 @@ O **Queridinha Makeup PDV** é um sistema de caixa e gestão de estoque desktop 
    ```bash
     git clone https://github.com/stroomper/sistema-pdv-queridinha-makeup.git
    cd sistema-pdv-queridinha-makeup
-
- 
