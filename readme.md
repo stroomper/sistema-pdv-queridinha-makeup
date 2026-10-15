@@ -32,17 +32,19 @@ O **Queridinha Makeup PDV** é um sistema de caixa e gestão de estoque desktop 
 
 ## 📸 Demonstração do Sistema
 
-![Dashboard - Painel de Indicadores](assets/dashboard.png)
+![Dashboard - Painel Analítico](assets/dashboard.png)
 *Painel analítico com faturamento, lucro bruto, ticket médio e análise da Curva ABC.*
 
 ![Caixa PDV - Ponto de Venda](assets/caixa.png)
-*Interface de caixa com busca rápida EAN, produtos avulsos e cálculo de troco.*
-
-![Gestão de Estoque](assets/estoque.png)
-*Controle de estoque com edição rápida, busca dinâmica e importação de planilhas.*
+*Interface de caixa com busca rápida por código EAN, produtos avulsos e cálculo automático de troco.*
 
 ![Histórico de Vendas](assets/vendas.png)
 *Histórico de vendas com detalhamento expansível de itens, reimpressão de cupons e cancelamento com estorno ao estoque.*
+
+![Gestão de Estoque](assets/estoque.png)
+*Controle de estoque com edição rápida, busca dinâmica e importação em massa de planilhas Excel/CSV.*
+
+---
 
 ### 💾 Segurança dos Dados
 - **Backup da Base**: Exportação em 1 clique do banco de dados SQLite (`caixa.db`).
