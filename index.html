@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Queridinha Makeup — Sistema de Caixa</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Container de Notificações Toast (Não Bloqueante) -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Menu Lateral (Sidebar) -->
+  <div class="sidebar">
+    <div>
+      <div class="brand">
+        <img src="logo.jpg" class="brand-logo-img" alt="Logo Queridinha Makeup">
+        <div>
+          <div class="brand-title">Queridinha</div>
+          <div class="brand-subtitle">Makeup · PDV</div>
+        </div>
+      </div>
+
+      <ul class="nav-list">
+        <li class="nav-item active" onclick="navegarPara('dashboard')">📊 Dashboard</li>
+        <li class="nav-item" onclick="navegarPara('caixa')">🛒 Caixa</li>
+        <li class="nav-item" onclick="navegarPara('estoque')">📦 Estoque</li>
+        <li class="nav-item" onclick="navegarPara('vendas')">📄 Vendas</li>
+      </ul>
+    </div>
+
+    <div class="sidebar-footer">
+      Sistema local<br>
+      Dados salvos neste computador
+    </div>
+  </div>
+
+  <!-- Área de Conteúdo -->
+  <div class="content-area">
+    <div class="top-header">
+      <div>
+        <div class="page-title" id="page-title">Dashboard</div>
+        <div class="page-date" id="data-atual">--/--/----</div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn-secondary" id="btn-backup-db">💾 Fazer Backup</button>
+        <button class="btn-danger" id="btn-abrir-fechamento">🔒 Fechamento de Caixa</button>
+      </div>
+    </div>
+
+    <!-- TELA 1: DASHBOARD -->
+    <div id="page-dashboard" class="page active">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <span style="font-size: 13px; font-weight: 600; color: #6b7280; text-transform: uppercase;">Filtrar Período:</span>
+        <select id="filtro-dashboard" class="select-periodo">
+          <option value="todos">Todo o Histórico</option>
+          <option value="hoje">Hoje</option>
+          <option value="7dias">Últimos 7 dias</option>
+          <option value="mes">Este Mês</option>
+        </select>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-title">💰 Faturamento Total</div>
+          <div class="kpi-value" id="dash-faturamento">R$ 0,00</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">📊 Lucro Bruto</div>
+          <div class="kpi-value" id="dash-lucro">R$ 0,00</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">🧾 Vendas Concluídas</div>
+          <div class="kpi-value" id="dash-vendas-qtd">0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">🎯 Ticket Médio</div>
+          <div class="kpi-value" id="dash-ticket">R$ 0,00</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">🛍️ UPT (Itens / Venda)</div>
+          <div class="kpi-value" id="dash-upt">0.0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">📦 Valor do Estoque</div>
+          <div class="kpi-value" id="dash-valor-estoque">R$ 0,00</div>
+        </div>
+      </div>
+
+      <div class="dash-sections-grid">
+        <div class="dash-box">
+          <div class="dash-box-title">🎖️ TOP 3 Produtos Mais Vendidos</div>
+          <div id="dash-top-vendidos">
+            <p style="color:#9ca3af; padding: 10px 0;">Nenhuma venda registrada até o momento.</p>
+          </div>
+        </div>
+
+        <div class="dash-box">
+          <div class="dash-box-title">📈 Curva ABC (Concentração de Vendas)</div>
+          <div id="dash-curva-abc" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="dash-row" id="card-abc-a" style="cursor: pointer;">
+              <div><strong>Classe A (80% Faturamento):</strong></div>
+              <div style="font-weight:700; color:#2ecc71;" id="abc-a">0 produtos</div>
+            </div>
+            <div class="dash-row" id="card-abc-b" style="cursor: pointer;">
+              <div><strong>Classe B (15% Faturamento):</strong></div>
+              <div style="font-weight:700; color:#3b82f6;" id="abc-b">0 produtos</div>
+            </div>
+            <div class="dash-row" id="card-abc-c" style="cursor: pointer;">
+              <div><strong>Classe C (5% Faturamento):</strong></div>
+              <div style="font-weight:700; color:#9ca3af;" id="abc-c">0 produtos</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TELA 2: CAIXA -->
+    <div id="page-caixa" class="page">
+      <div class="caixa-layout">
+        <div class="caixa-main">
+          <div class="input-group">
+            <label>Código de barras ou Nome do Produto</label>
+            <div class="input-flex">
+              <input type="text" id="campo-busca" class="input-field" placeholder="Digite ou passe o leitor de código de barras..." autofocus autocomplete="off">
+              <button class="btn-purple" id="btn-adicionar-busca">Adicionar</button>
+            </div>
+          </div>
+
+          <div class="avulso-container">
+            <div class="section-title">Produto Avulso (Fora do Estoque)</div>
+            <div class="avulso-grid">
+              <div class="input-group">
+                <label>Descrição</label>
+                <input type="text" id="avulso-nome" class="input-field" placeholder="Nome do produto">
+              </div>
+              <div class="input-group">
+                <label>Valor (R$)</label>
+                <input type="number" step="0.01" id="avulso-valor" class="input-field" placeholder="0,00">
+              </div>
+              <button class="btn-secondary" id="btn-add-avulso">+ Adicionar avulso</button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th style="width: 40px;">#</th>
+                  <th>PRODUTO</th>
+                  <th style="width: 70px;">QTD</th>
+                  <th style="width: 100px;">UNITÁRIO</th>
+                  <th style="width: 100px;">SUBTOTAL</th>
+                  <th style="width: 60px; text-align: center;">AÇÃO</th>
+                </tr>
+              </thead>
+              <tbody id="lista-carrinho">
+                <tr>
+                  <td colspan="6" style="text-align: center; color: #9ca3af; padding: 25px;">Aguardando leitura de produtos...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="caixa-sidebar">
+          <div class="total-display">
+            <div class="total-display-title">TOTAL DA VENDA</div>
+            <div class="total-display-value" id="total-venda-display">R$ 0,00</div>
+            <div id="subtotal-info" style="font-size: 12px; color: #6b7280; margin-top: 2px; display: none;">Subtotal: R$ 0,00</div>
+          </div>
+
+          <div class="input-group">
+            <label>Desconto (R$)</label>
+            <input type="number" step="0.01" id="valor-desconto" class="input-field" placeholder="0,00">
+          </div>
+
+          <div class="input-group">
+            <label>Forma de pagamento</label>
+            <select id="forma-pagamento" class="select-custom">
+              <option value="Dinheiro">Dinheiro</option>
+              <option value="PIX">PIX</option>
+              <option value="Cartão de Crédito">Cartão de Crédito</option>
+              <option value="Cartão de Débito">Cartão de Débito</option>
+            </select>
+          </div>
+
+          <div id="secao-dinheiro" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="input-group">
+              <label>Valor Recebido (R$)</label>
+              <input type="number" step="0.01" id="valor-recebido" class="input-field" placeholder="0,00">
+            </div>
+
+            <div class="troco-box">
+              <div class="troco-title">Troco</div>
+              <div class="troco-value" id="troco-display">R$ 0,00</div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+            <button class="btn-finish-sale" id="btn-finalizar">✓ Finalizar venda (F9)</button>
+            <button class="btn-clear-sale" id="btn-limpar">Limpar venda</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TELA 3: ESTOQUE -->
+    <div id="page-estoque" class="page">
+      <div class="dash-box">
+        <div class="estoque-header">
+          <h2 style="font-size: 18px; font-weight: 700;">Cadastro de Estoque</h2>
+          <div style="display: flex; gap: 10px;">
+            <button id="btn-abrir-modal-cadastrar" style="background-color: #28a745; color: white; border: none; padding: 11px 18px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer;">
+              + Novo Produto
+            </button>
+            <button class="btn-purple" id="btn-importar-arquivo">📁 Importar de CSV ou Excel</button>
+          </div>
+        </div>
+
+        <div class="import-info-box">
+          <strong>💡 Como preparar o seu arquivo CSV ou Excel:</strong><br>
+          Insira na primeira linha o cabeçalho com os nomes das colunas:<br>
+          <code>codigo_barras</code> | <code>nome</code> | <code>categoria</code> | <code>preco_custo</code> | <code>preco_venda</code> | <code>estoque_atual</code>
+        </div>
+
+        <div class="estoque-toolbar">
+          <input type="text" id="busca-estoque" class="input-field estoque-search-input" placeholder="🔍 Consultar por Nome ou Código de Barras (EAN)...">
+          <button type="button" class="btn-purple" id="btn-filtrar-estoque">🔍 Filtrar</button>
+          <button type="button" class="btn-secondary" id="btn-limpar-filtro-estoque">🔄 Limpar</button>
+        </div>
+
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>CÓDIGO</th>
+              <th>PRODUTO</th>
+              <th>CATEGORIA</th>
+              <th>CUSTO</th>
+              <th>VENDA</th>
+              <th>ESTOQUE</th>
+              <th style="text-align: center; width: 80px;">AÇÕES</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-estoque-body">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TELA 4: VENDAS -->
+    <div id="page-vendas" class="page">
+      <div class="dash-box">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <h2 style="font-size: 16px; font-weight: 700;">Histórico de Vendas</h2>
+          <select id="filtro-vendas" class="select-periodo">
+            <option value="todos">Todo o Histórico</option>
+            <option value="hoje">Hoje</option>
+            <option value="7dias">Últimos 7 dias</option>
+            <option value="mes">Este Mês</option>
+          </select>
+        </div>
+
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th style="width: 110px;">ID VENDA</th>
+              <th>DATA / HORA</th>
+              <th>PAGAMENTO</th>
+              <th>QTD ITENS</th>
+              <th>TOTAL</th>
+              <th style="text-align: center; width: 180px;">AÇÕES</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-vendas-body">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL IMPRESSÃO CUPOM DE VENDA -->
+  <div class="modal-overlay hidden" id="modal-cupom">
+    <div class="modal-card">
+      <div class="modal-icon">🎉</div>
+      <div class="modal-title">Venda Concluída!</div>
+      <div class="modal-subtitle">A venda foi registrada com sucesso na base de dados.</div>
+
+      <div class="modal-summary">
+        <div class="modal-summary-row">
+          <span style="color:#6b7280;">Nº Pedido:</span>
+          <strong id="modal-num-venda">#001</strong>
+        </div>
+        <div class="modal-summary-row">
+          <span style="color:#6b7280;">Forma de Pagamento:</span>
+          <strong id="modal-pagamento">Dinheiro</strong>
+        </div>
+        <div class="modal-summary-row" id="modal-linha-desconto" style="display:none;">
+          <span style="color:#6b7280;">Desconto Concedido:</span>
+          <strong id="modal-desconto" style="color:#c53929;">- R$ 0,00</strong>
+        </div>
+        <div class="modal-summary-row">
+          <span style="color:#6b7280;">Valor Total:</span>
+          <strong id="modal-total" style="color:#2ecc71; font-size:16px;">R$ 0,00</strong>
+        </div>
+        <div class="modal-summary-row" id="modal-linha-recebido">
+          <span style="color:#6b7280;">Valor Recebido:</span>
+          <strong id="modal-recebido">R$ 0,00</strong>
+        </div>
+        <div class="modal-summary-row" id="modal-linha-troco" style="margin-bottom:0;">
+          <span style="color:#6b7280;">Troco:</span>
+          <strong id="modal-troco" style="color:#15803d; font-size:16px;">R$ 0,00</strong>
+        </div>
+      </div>
+
+      <div class="modal-buttons">
+        <button class="btn-finish-sale" id="btn-imprimir-modal">🖨️ Imprimir Cupom (80mm)</button>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-secondary" id="btn-whatsapp-modal" style="flex: 1; background: #25D366; color: white; border: none;">📱 Copiar p/ WhatsApp</button>
+          <button class="btn-secondary" id="btn-pdf-modal" style="flex: 1;">📄 Salvar PDF</button>
+        </div>
+        <button class="btn-secondary" id="btn-fechar-modal" style="margin-top: 4px;">Concluir sem Imprimir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL FECHAMENTO DE CAIXA -->
+  <div class="modal-overlay hidden" id="modal-fechamento">
+    <div class="modal-card">
+      <div class="modal-icon">📊</div>
+      <div class="modal-title">Fechamento de Caixa</div>
+      <div class="modal-subtitle">Resumo das operações e totais acumulados.</div>
+
+      <div class="modal-summary">
+        <div class="modal-summary-row">
+          <span style="color:#6b7280;">Total de Vendas:</span>
+          <strong id="fechamento-qtd">0</strong>
+        </div>
+        <div class="modal-summary-row">
+          <span style="color:#6b7280;">Faturamento Acumulado:</span>
+          <strong id="fechamento-total" style="color:#2ecc71; font-size:16px;">R$ 0,00</strong>
+        </div>
+        <div class="modal-summary-row" style="margin-bottom:0;">
+          <span style="color:#6b7280;">Lucro Bruto Estimado:</span>
+          <strong id="fechamento-lucro" style="color:#3b82f6;">R$ 0,00</strong>
+        </div>
+      </div>
+
+      <div class="modal-buttons">
+        <button class="btn-finish-sale" id="btn-imprimir-fechamento">🖨️ Imprimir Relatório de Fechamento</button>
+        <button class="btn-secondary" id="btn-fechar-fechamento-modal">Fechar Janela</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Curva ABC -->
+  <div id="modal-curva-abc" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 650px; max-height: 85vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <h3 id="modal-abc-titulo">Produtos - Classe A</h3>
+        <button id="btn-fechar-modal-abc" class="btn-close">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow-y: auto; max-height: 60vh; margin-top: 10px;">
+        <table class="tabela-abc">
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th style="text-align: center;">Qtd Vendida</th>
+              <th style="text-align: right;">Faturamento</th>
+              <th style="text-align: right;">% do Total</th>
+            </tr>
+          </thead>
+          <tbody id="lista-produtos-abc">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Cadastrar Produto -->
+  <div id="modal-cadastrar-produto" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Cadastrar Novo Produto</h3>
+        <button id="btn-fechar-modal-cadastrar" class="btn-close">&times;</button>
+      </div>
+      <form id="form-cadastrar-produto" style="padding-top: 15px;">
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; margin-bottom: 4px; font-weight: bold;">Código de Barras (EAN)</label>
+          <input type="text" id="cad-codigo" placeholder="Deixe em branco para código automático" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; margin-bottom: 4px; font-weight: bold;">Nome do Produto *</label>
+          <input type="text" id="cad-nome" required placeholder="Ex: Batom Matte Rosa" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; margin-bottom: 4px; font-weight: bold;">Categoria</label>
+          <input type="text" id="cad-categoria" placeholder="Ex: Maquiagem, Acessórios" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+          <div style="flex: 1;">
+            <label style="display: block; margin-bottom: 4px; font-weight: bold;">Custo (R$)</label>
+            <input type="number" step="0.01" id="cad-custo" placeholder="0.00" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+          </div>
+          <div style="flex: 1;">
+            <label style="display: block; margin-bottom: 4px; font-weight: bold;">Venda (R$) *</label>
+            <input type="number" step="0.01" id="cad-venda" required placeholder="0.00" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+          </div>
+          <div style="flex: 1;">
+            <label style="display: block; margin-bottom: 4px; font-weight: bold;">Estoque</label>
+            <input type="number" id="cad-estoque" value="0" min="0" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+          </div>
+        </div>
+
+        <div style="text-align: right; margin-top: 20px; border-top: 1px solid #eee; padding-top: 12px;">
+          <button type="button" id="btn-cancelar-cadastrar" style="padding: 8px 16px; margin-right: 8px; border: 1px solid #ccc; background: #fff; border-radius: 4px; cursor: pointer;">Cancelar</button>
+          <button type="submit" style="padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Salvar Produto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Editar Produto -->
+  <div id="modal-editar-produto" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 450px;">
+      <div class="modal-header">
+        <h3 id="modal-edit-nome-titulo">Editar Produto</h3>
+        <button id="btn-fechar-modal-editar" class="btn-close">&times;</button>
+      </div>
+      <form id="form-editar-produto" style="padding-top: 15px;">
+        <input type="hidden" id="edit-id">
+
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; margin-bottom: 4px; font-weight: bold;">Código de Barras (EAN) *</label>
+          <input type="text" id="edit-codigo" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="Digite ou leia o código EAN">
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; margin-bottom: 4px; font-weight: bold;">Preço de Custo (R$)</label>
+          <input type="number" step="0.01" id="edit-custo" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; margin-bottom: 4px; font-weight: bold;">Preço de Venda (R$) *</label>
+          <input type="number" step="0.01" id="edit-venda" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; margin-bottom: 4px; font-weight: bold;">Estoque Atual *</label>
+          <input type="number" id="edit-estoque" required min="0" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+
+        <div style="text-align: right; border-top: 1px solid #eee; padding-top: 12px;">
+          <button type="button" id="btn-cancelar-editar" style="padding: 8px 16px; margin-right: 8px; border: 1px solid #ccc; background: #fff; border-radius: 4px; cursor: pointer;">Cancelar</button>
+          <button type="submit" style="padding: 8px 16px; background: #6b3a6d; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Salvar Alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/renderer.js"></script>
+</body>
+</html>

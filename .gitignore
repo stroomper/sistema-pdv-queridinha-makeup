@@ -1,0 +1,14 @@
+# Dependências e compilações
+node_modules/
+dist/
+build/
+
+# Banco de dados local com dados de teste
+*.db
+caixa.db
+
+# Arquivos de log e do sistema
+*.log
+.DS_Store
+.vscode/
+config.json
