@@ -1,14 +1,23 @@
+# Arquivos de log e do sistema
+*.log
+
 # Dependências e compilações
 node_modules/
 dist/
 build/
 
-# Banco de dados local com dados de teste
-*.db
+# Dados sensíveis e bancos locais da loja
 caixa.db
-
-# Arquivos de log e do sistema
-*.log
-.DS_Store
-.vscode/
+*.db
 config.json
+erros.log
+
+# Planilhas temporárias/pessoais
+*.xlsm
+*.xlsx
+*.csv
+
+# Sistema operacional e VS Code
+.vscode/
+.DS_Store
+Thumbs.db
